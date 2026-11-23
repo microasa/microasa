@@ -1,0 +1,6 @@
+# Raw datasets are large and have their own licenses; download via scripts, never commit.
+data/raw/
+data/interim/
+__pycache__/
+*.pyc
+.venv/
