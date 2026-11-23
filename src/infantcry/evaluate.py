@@ -22,7 +22,7 @@ def load_embeddings(task: str, model: str):
     pos = {p: i for i, p in enumerate(z["paths"])}
     layers = z["layers"][[pos[p] for p in df.path]].astype(np.float32)
     X = {f"L{i:02d}": layers[:, i] for i in range(layers.shape[1])}
-    return X, df.label.values.astype(str), df.group.values.astype(str)
+    return X, np.array(df.label.tolist(), dtype="U32"), np.array(df.group.tolist(), dtype="U32")
 
 
 def subset(X, idx):
