@@ -10,6 +10,7 @@ Two orthogonal weighting levels:
     training fold, so the outer test fold never influences them.
 """
 import numpy as np
+from sklearn.decomposition import PCA
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
@@ -38,23 +39,26 @@ def _softmax(a: np.ndarray, axis: int) -> np.ndarray:
     return e / e.sum(axis=axis, keepdims=True)
 
 
-def make_base(class_weight, C: float = 1.0):
-    return make_pipeline(
-        StandardScaler(),
-        LogisticRegression(C=C, class_weight=class_weight, max_iter=2000),
-    )
+def make_base(class_weight, C: float = 1.0, pca=None):
+    """Scaler -> (optional PCA, fitted on the training fold only) -> logistic regression."""
+    steps = [StandardScaler()]
+    if pca:
+        steps.append(PCA(n_components=pca, random_state=0))
+    steps.append(LogisticRegression(C=C, class_weight=class_weight, max_iter=2000))
+    return make_pipeline(*steps)
 
 
 class ConcatClassifier(BaseEstimator, ClassifierMixin):
     """Baseline: all feature groups concatenated, single logistic regression."""
 
-    def __init__(self, class_scheme="none", C=1.0):
+    def __init__(self, class_scheme="none", C=1.0, pca=None):
         self.class_scheme = class_scheme
         self.C = C
+        self.pca = pca
 
     def fit(self, X, y, groups=None):  # X: dict[group -> array]
         self.keys_ = list(X)
-        self.model_ = make_base(class_weight_dict(y, self.class_scheme), self.C)
+        self.model_ = make_base(class_weight_dict(y, self.class_scheme), self.C, self.pca)
         self.model_.fit(np.hstack([X[k] for k in self.keys_]), y)
         self.classes_ = self.model_.classes_
         return self
@@ -67,8 +71,9 @@ class ConcatClassifier(BaseEstimator, ClassifierMixin):
 
 
 class GroupFusionClassifier(BaseEstimator, ClassifierMixin):
-    def __init__(self, class_scheme="none", fusion="equal", tau=10.0, inner_splits=3, seed=0, C=1.0):
+    def __init__(self, class_scheme="none", fusion="equal", tau=10.0, inner_splits=3, seed=0, C=1.0, pca=None):
         self.C = C
+        self.pca = pca
         self.class_scheme = class_scheme
         self.fusion = fusion
         self.tau = tau
@@ -84,7 +89,7 @@ class GroupFusionClassifier(BaseEstimator, ClassifierMixin):
         for gi, k in enumerate(self.keys_):
             pred = np.empty(len(y), dtype=y.dtype)
             for tr, va in cv.split(X[k], y, groups):
-                m = make_base(cw, self.C).fit(X[k][tr], y[tr])
+                m = make_base(cw, self.C, self.pca).fit(X[k][tr], y[tr])
                 pred[va] = m.predict(X[k][va])
             scores[gi] = f1_score(y, pred, labels=self.classes_, average=None, zero_division=0)
         return scores
@@ -93,7 +98,7 @@ class GroupFusionClassifier(BaseEstimator, ClassifierMixin):
         self.keys_ = list(X)
         self.classes_ = np.unique(y)
         cw = class_weight_dict(y, self.class_scheme)
-        self.models_ = [make_base(cw, self.C).fit(X[k], y) for k in self.keys_]
+        self.models_ = [make_base(cw, self.C, self.pca).fit(X[k], y) for k in self.keys_]
         G, C = len(self.keys_), len(self.classes_)
         if self.fusion == "equal":
             self.w_ = np.full((G, C), 1.0 / G)
@@ -120,8 +125,8 @@ class GroupFusionClassifier(BaseEstimator, ClassifierMixin):
 class SingleLayerClassifier(ConcatClassifier):
     """Baseline: one named feature group only (e.g. the last encoder layer)."""
 
-    def __init__(self, key, class_scheme="balanced", C=1.0):
-        super().__init__(class_scheme, C)
+    def __init__(self, key, class_scheme="balanced", C=1.0, pca=None):
+        super().__init__(class_scheme, C, pca)
         self.key = key
 
     def fit(self, X, y, groups=None):

@@ -14,16 +14,16 @@ from infantcry.weighting import (GroupFusionClassifier, MeanGroupClassifier,  # 
 
 task, model = sys.argv[1], sys.argv[2]
 n_seeds = int(sys.argv[3]) if len(sys.argv) > 3 else 3
-C = 0.05  # strong L2: 768-d embeddings, few subjects
+C, PCA_DIM = 0.05, 64  # strong L2 + per-layer PCA(64) fitted on the training fold only
 PROPOSED = "layers_classwise+balanced"
 MODELS = {
-    "last_layer+balanced": partial(SingleLayerClassifier, "L12", "balanced", C),
-    "mean_layers+balanced": partial(MeanGroupClassifier, "balanced", C),
-    "best_layer(inner-CV)+balanced": partial(GroupFusionClassifier, "balanced", "global", 1000.0, C=C),
-    "layers_equal+none": partial(GroupFusionClassifier, "none", "equal", C=C),
-    "layers_equal+balanced": partial(GroupFusionClassifier, "balanced", "equal", C=C),
-    "layers_global+balanced": partial(GroupFusionClassifier, "balanced", "global", C=C),
-    PROPOSED: partial(GroupFusionClassifier, "balanced", "classwise", C=C),
+    "last_layer+balanced": partial(SingleLayerClassifier, "L12", "balanced", C, PCA_DIM),
+    "mean_layers+balanced": partial(MeanGroupClassifier, "balanced", C, PCA_DIM),
+    "best_layer(inner-CV)+balanced": partial(GroupFusionClassifier, "balanced", "global", 1000.0, C=C, pca=PCA_DIM),
+    "layers_equal+none": partial(GroupFusionClassifier, "none", "equal", C=C, pca=PCA_DIM),
+    "layers_equal+balanced": partial(GroupFusionClassifier, "balanced", "equal", C=C, pca=PCA_DIM),
+    "layers_global+balanced": partial(GroupFusionClassifier, "balanced", "global", C=C, pca=PCA_DIM),
+    PROPOSED: partial(GroupFusionClassifier, "balanced", "classwise", C=C, pca=PCA_DIM),
 }
 X, y, groups = load_embeddings(task, model)
 print(task, model, "n =", len(y), "| subjects =", len(set(groups)), "|", dict(pd.Series(y).value_counts()), flush=True)
