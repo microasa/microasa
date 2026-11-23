@@ -1,0 +1,10 @@
+,macro_f1,macro_f1,bal_acc,bal_acc,acc,acc,p_vs_proposed(macroF1)
+,mean,std,mean,std,mean,std,
+model,,,,,,,
+concat+balanced,0.611,0.023,0.613,0.024,0.615,0.023,0.0125
+concat+none,0.611,0.027,0.611,0.026,0.628,0.025,0.0413
+fusion_classwise+balanced,0.605,0.025,0.607,0.025,0.609,0.025,
+fusion_classwise+effective,0.597,0.027,0.601,0.026,0.627,0.026,0.0012
+fusion_equal+balanced,0.606,0.026,0.608,0.025,0.61,0.026,0.804
+fusion_equal+none,0.559,0.018,0.58,0.017,0.62,0.018,0.0001
+fusion_global+balanced,0.605,0.025,0.607,0.025,0.609,0.025,0.8785
