@@ -1,0 +1,10 @@
+,macro_f1,macro_f1,bal_acc,bal_acc,acc,acc,p_vs_proposed
+,mean,std,mean,std,mean,std,
+model,,,,,,,
+best_layer(inner-CV)+balanced,0.836,0.052,0.838,0.062,0.868,0.04,0.978
+last_layer+balanced,0.715,0.075,0.719,0.076,0.774,0.051,0.0001
+layers_classwise+balanced,0.829,0.071,0.824,0.077,0.868,0.046,
+layers_equal+balanced,0.807,0.09,0.801,0.09,0.856,0.047,0.0284
+layers_equal+none,0.811,0.086,0.783,0.088,0.866,0.048,0.1401
+layers_global+balanced,0.828,0.086,0.826,0.082,0.871,0.045,0.6465
+mean_layers+balanced,0.78,0.097,0.78,0.087,0.828,0.051,0.0043
