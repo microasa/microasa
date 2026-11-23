@@ -29,21 +29,33 @@ def subset(X, idx):
     return {k: v[idx] for k, v in X.items()}
 
 
-def evaluate(make_models: dict, X, y, groups, n_splits=5, seeds=(0, 1, 2)):
+def _run_fold(make_models, X, y, groups, seed, fold, tr, te):
+    assert not set(groups[tr]) & set(groups[te]), "subject leakage"
     rows = []
+    for name, factory in make_models.items():
+        m = factory().fit(subset(X, tr), y[tr], groups=groups[tr])
+        p = m.predict(subset(X, te))
+        rows.append(
+            dict(
+                model=name, seed=seed, fold=fold,
+                macro_f1=f1_score(y[te], p, average="macro", zero_division=0),
+                bal_acc=balanced_accuracy_score(y[te], p),
+                acc=accuracy_score(y[te], p),
+            )
+        )
+    return rows
+
+
+def evaluate(make_models: dict, X, y, groups, n_splits=5, seeds=(0, 1, 2), n_jobs=4):
+    """Outer folds run in parallel (one process per fold); results are deterministic."""
+    from joblib import Parallel, delayed
+
+    jobs = []
     for seed in seeds:
         cv = StratifiedGroupKFold(n_splits, shuffle=True, random_state=seed)
         for fold, (tr, te) in enumerate(cv.split(np.zeros(len(y)), y, groups)):
-            assert not set(groups[tr]) & set(groups[te]), "subject leakage"
-            for name, factory in make_models.items():
-                m = factory().fit(subset(X, tr), y[tr], groups=groups[tr])
-                p = m.predict(subset(X, te))
-                rows.append(
-                    dict(
-                        model=name, seed=seed, fold=fold,
-                        macro_f1=f1_score(y[te], p, average="macro", zero_division=0),
-                        bal_acc=balanced_accuracy_score(y[te], p),
-                        acc=accuracy_score(y[te], p),
-                    )
-                )
-    return pd.DataFrame(rows)
+            jobs.append((seed, fold, tr, te))
+    out = Parallel(n_jobs=n_jobs)(
+        delayed(_run_fold)(make_models, X, y, groups, *j) for j in jobs
+    )
+    return pd.DataFrame([r for rows in out for r in rows])
