@@ -5,6 +5,7 @@ Each loader returns a DataFrame with columns: path, label, group, dataset.
 """
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 RAW = Path("data/raw")
@@ -47,6 +48,32 @@ def load_ujm() -> pd.DataFrame:
     )
 
 
+def _ujm_base() -> pd.DataFrame:
+    m = pd.read_csv(RAW / "ujm_axa/subset.csv")
+    m = m[[(RAW / "ujm_axa/audio" / n).exists() for n in m.zip_name]].copy()
+    m["path"] = [str(RAW / "ujm_axa/audio" / n) for n in m.zip_name]
+    m["age_h"] = pd.to_timedelta(m.age).dt.total_seconds() / 3600
+    return m
+
+
+def load_ujm_sex() -> pd.DataFrame:
+    """UJM-AXA subset: newborn sex (F/M), near-balanced. Pre-declared task."""
+    m = _ujm_base()
+    return pd.DataFrame({"path": m.path.values, "label": m.sex.values,
+                         "group": m.baby.astype(str).values, "dataset": "ujm_sex"})
+
+
+def load_ujm_age() -> pd.DataFrame:
+    """UJM-AXA subset: recording age, lowest vs highest tertile of age in hours
+    (middle tertile dropped). Pre-declared task; thresholds from the whole subset."""
+    m = _ujm_base()
+    lo, hi = m.age_h.quantile([1 / 3, 2 / 3])
+    m = m[(m.age_h <= lo) | (m.age_h >= hi)]
+    return pd.DataFrame({"path": m.path.values,
+                         "label": np.where(m.age_h <= lo, "young", "old"),
+                         "group": m.baby.astype(str).values, "dataset": "ujm_age"})
+
+
 def load_dbl_clean() -> pd.DataFrame:
     """InfantCry-DBL, only Tier-2 clips with source `online_or_volunteer`.
 
@@ -67,4 +94,13 @@ def load_dbl_clean() -> pd.DataFrame:
     )
 
 
-LOADERS = {"cryceleb": load_cryceleb, "ujm_axa": load_ujm, "infantcry_dbl": load_dbl_clean}
+LOADERS = {
+    "cryceleb": load_cryceleb,
+    "infantcry_dbl": load_dbl_clean,
+    "ujm_sex": load_ujm_sex,
+    "ujm_age": load_ujm_age,
+    "ujm_axa": load_ujm,  # delivery method (supplementary; ~chance level)
+}
+# Embeddings are extracted once per audio pool, then matched to task rows by path.
+EMB_POOL = {"cryceleb": "cryceleb", "infantcry_dbl": "infantcry_dbl",
+            "ujm_sex": "ujm_axa", "ujm_age": "ujm_axa", "ujm_axa": "ujm_axa"}
