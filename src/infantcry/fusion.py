@@ -58,8 +58,10 @@ class Prep:
         self.sc = StandardScaler().fit(Z)
         Z = self.sc.transform(Z)
         self.p = None
-        if self.pca and Z.shape[1] > self.pca:
-            self.p = PCA(self.pca, whiten=True, random_state=self.seed).fit(Z)
+        if self.pca:
+            k = min(self.pca, Z.shape[0] - 1)  # cannot exceed n_samples - 1 (tiny DBL folds)
+            if Z.shape[1] > k:
+                self.p = PCA(k, whiten=True, random_state=self.seed).fit(Z)
         return self
 
     def transform(self, X):

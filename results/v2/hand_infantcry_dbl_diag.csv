@@ -1,0 +1,16 @@
+task,rep,seed,fold,tau,w_max,best_single
+infantcry_dbl,hand,0,0,30.0,0.9041936219659922,mfcc
+infantcry_dbl,hand,0,1,1.0,0.20919465340901242,mfcc
+infantcry_dbl,hand,0,2,10.0,0.47733058022903013,mfcc
+infantcry_dbl,hand,0,3,10.0,0.6130941529657971,mfcc
+infantcry_dbl,hand,0,4,10.0,0.7001409723962908,mfcc
+infantcry_dbl,hand,1,0,10.0,0.4971192149172451,mfcc
+infantcry_dbl,hand,1,1,10.0,0.6530951784950082,mfcc
+infantcry_dbl,hand,1,2,10.0,0.4246172952425465,mfcc
+infantcry_dbl,hand,1,3,10.0,0.6468526841309659,mfcc
+infantcry_dbl,hand,1,4,10.0,0.7723153065832329,mfcc
+infantcry_dbl,hand,2,0,10.0,0.6845044941924765,mfcc
+infantcry_dbl,hand,2,1,30.0,0.7576077302853874,mfcc
+infantcry_dbl,hand,2,2,0.0,0.16666666666666666,mfcc
+infantcry_dbl,hand,2,3,3.0,0.24193487510095293,mfcc
+infantcry_dbl,hand,2,4,30.0,0.9346028313211429,mfcc

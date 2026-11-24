@@ -56,4 +56,10 @@ Decision rule: a method is called better only if the Holm-adjusted p < 0.05 **an
 best model on a task, that task is reported as shortcut-dominated.
 
 ## Deviations
-(none yet)
+1. PCA dimension is capped at n_train − 1 when a (inner) training split has fewer than
+   65 samples. Only DBL embedding runs are affected (inner splits of ~54 clips). Found as
+   a crash on the first DBL embedding run, before any embedding result existed.
+2. DBL cleaning (applied exactly as specified) left 103 clips in 86 groups: 1 byte-identical
+   duplicate and 133 cross-corpus matches were removed (107 of them with cosine ≥ 0.999,
+   i.e. copies: 41 of Tier-1 Dunstan clips, 66 of CryCeleb clips). This is not a protocol
+   change, but it makes DBL very small (heh: 6 clips); DBL results are low-powered.
