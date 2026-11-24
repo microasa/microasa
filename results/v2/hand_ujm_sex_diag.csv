@@ -1,0 +1,16 @@
+task,rep,seed,fold,tau,w_max,best_single
+ujm_sex,hand,0,0,1.0,0.17117080903768944,spectral
+ujm_sex,hand,0,1,3.0,0.1752321376516599,mfcc
+ujm_sex,hand,0,2,1000.0,0.9983283124795578,spectral
+ujm_sex,hand,0,3,300.0,0.8526007149347574,spectral
+ujm_sex,hand,0,4,30.0,0.46722044643956645,mfcc
+ujm_sex,hand,1,0,300.0,0.9924066984422397,spectral
+ujm_sex,hand,1,1,30.0,0.4328083742252202,mfcc
+ujm_sex,hand,1,2,30.0,0.46450066896944814,spectral
+ujm_sex,hand,1,3,1000.0,0.994594519665146,mfcc
+ujm_sex,hand,1,4,100.0,0.7578323317113392,mfcc
+ujm_sex,hand,2,0,30.0,0.26440814497635906,spectral
+ujm_sex,hand,2,1,300.0,0.9999801146494873,mfcc
+ujm_sex,hand,2,2,100.0,0.8247747097538676,spectral
+ujm_sex,hand,2,3,30.0,0.5045885168460839,mfcc
+ujm_sex,hand,2,4,100.0,0.7690610747881027,spectral

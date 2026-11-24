@@ -1,0 +1,16 @@
+task,rep,seed,fold,tau,w_max,best_single
+ujm_age,hand,0,0,100.0,0.5442379809880061,spectral
+ujm_age,hand,0,1,30.0,0.28592745792475033,mfcc
+ujm_age,hand,0,2,100.0,0.32517479705720986,delta
+ujm_age,hand,0,3,30.0,0.3467363572302805,mfcc
+ujm_age,hand,0,4,100.0,0.8621307500875954,pitch
+ujm_age,hand,1,0,100.0,0.7618432169287501,mfcc
+ujm_age,hand,1,1,100.0,0.3034319436104634,spectral
+ujm_age,hand,1,2,10.0,0.2118028937131929,mfcc
+ujm_age,hand,1,3,30.0,0.2801640431625254,spectral
+ujm_age,hand,1,4,30.0,0.2796068070073141,delta
+ujm_age,hand,2,0,100.0,0.42460948925449715,spectral
+ujm_age,hand,2,1,0.0,0.16666666666666666,pitch
+ujm_age,hand,2,2,30.0,0.31379228134401127,mfcc
+ujm_age,hand,2,3,100.0,0.5472571276587239,spectral
+ujm_age,hand,2,4,300.0,0.9916284115417471,mfcc

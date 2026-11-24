@@ -1,0 +1,16 @@
+task,rep,seed,fold,tau,w_max,best_single
+cryceleb,hand,0,0,10.0,0.21394297350051328,mfcc
+cryceleb,hand,0,1,100.0,0.7093412250588454,mfcc
+cryceleb,hand,0,2,3.0,0.17836149925682648,delta
+cryceleb,hand,0,3,100.0,0.8041708809451533,delta
+cryceleb,hand,0,4,100.0,0.5653157886555493,mfcc
+cryceleb,hand,1,0,3.0,0.18193578931831011,mfcc
+cryceleb,hand,1,1,30.0,0.31916264179760107,mfcc
+cryceleb,hand,1,2,30.0,0.2840447393959965,delta
+cryceleb,hand,1,3,30.0,0.3873258733004339,delta
+cryceleb,hand,1,4,1.0,0.17276352240279702,mfcc
+cryceleb,hand,2,0,3.0,0.18273984485507236,mfcc
+cryceleb,hand,2,1,1.0,0.17138455955108994,delta
+cryceleb,hand,2,2,30.0,0.3783633853554132,mfcc
+cryceleb,hand,2,3,0.0,0.16666666666666666,delta
+cryceleb,hand,2,4,30.0,0.28805570752667353,delta
