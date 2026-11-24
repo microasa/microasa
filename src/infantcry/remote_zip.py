@@ -44,6 +44,8 @@ class RangeFile(io.RawIOBase):
                     time.sleep(min(float(r.headers.get("Retry-After", 5)) + attempt * 5, 90))
                     continue
                 r.raise_for_status()
+                if r.status_code != 206:  # server ignored Range: refuse to stream the whole file
+                    raise RuntimeError(f"expected HTTP 206 for a range request, got {r.status_code}")
                 break
             except requests.RequestException:
                 if attempt == 7:
