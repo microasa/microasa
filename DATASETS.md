@@ -26,3 +26,9 @@ Subject-independent splits only; report macro-F1 and balanced accuracy.
 Feature-group weighting gave no significant gain over equal-weight fusion on any dataset.
 Class weighting mattered only for fusion on imbalanced data (DBL, CryCeleb).
 CryCeleb: the `anonymousNNN` test ids must be excluded (same infant can appear under two ids).
+
+## Protocol v2 update (see PROTOCOL.md, reports/v2_fixes_and_results.pdf)
+- InfantCry-DBL: cross-corpus check found that 107 of 236 Tier-2 `online_or_volunteer` clips are copies
+  of Tier-1 Dunstan (41) or CryCeleb (66) clips; 26 more are near-copies. After cleaning: 103 clips,
+  86 CV groups (`results/dbl_manifest_v2.csv`). All v1 DBL numbers are invalid.
+- The "Preliminary results" table above is v1 and superseded; v2 results are in `results/v2/`.
