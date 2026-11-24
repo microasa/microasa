@@ -172,6 +172,37 @@ S += [Paragraph(t, bullet, bulletText="•") for t in [
     "Klaim lama yang harus dicabut: macro-F1 DBL ≈ 0,85, 'metode usulan lebih baik', dan 'multi-lapisan signifikan "
     "lebih baik dari lapisan terakhir'."]]
 
+import os  # noqa: E402
+
+if os.path.exists("results/v3/primary_tests.csv"):
+    p3 = pd.read_csv("results/v3/primary_tests.csv")
+    a, b = pd.read_csv("results/v2/summary.csv"), pd.read_csv("results/v3/summary.csv")
+    keep = ["equal", "best_single", "softmax_tau", "stacking", "superb_wsum", "last_layer", "concat_balanced"]
+    best = lambda d: d[d.method.isin(keep)].groupby(["task", "rep"]).macro_f1.max()  # noqa: E731
+    cmp_ = pd.concat([best(a).rename("v2"), best(b).rename("v3")], axis=1)
+    S.append(PageBreak())
+    S.append(P("8. Analisis sensitivitas v3: pembersihan data kualitas audio", h2))
+    S.append(P("Dijalankan setelah v2 atas permintaan, dengan kriteria yang dibekukan sebelum hasil (commit 228d42b): "
+               "semua audio di-band-limit ke 0–4 kHz; klip dengan clipping &gt; 0,1% atau &gt; 50% frame sunyi dibuang; "
+               "klip UJM dengan SNR &lt; 10 dB dibuang. Total 497 klip dibuang: CryCeleb 101, DBL 9, UJM 387. "
+               "v2 tetap menjadi hasil utama.", body))
+    S.append(P(f"<b>Hasil: {int((p3.verdict != 'no evidence').sum())} dari {len(p3)} hipotesis primer menunjukkan "
+               "bukti, sama seperti v2.</b> Pembersihan data tidak mengubah kesimpulan mana pun.", body))
+    rows = [["Tugas", "Rep.", "Skor terbaik v2", "Skor terbaik v3", "Selisih"]]
+    for (task, rep), r in cmp_.iterrows():
+        rows.append([task, rep, f"{r.v2:.3f}", f"{r.v3:.3f}", f"{r.v3 - r.v2:+.3f}"])
+    S.append(table(rows, [3.4 * cm, 2.0 * cm, 3.2 * cm, 3.2 * cm, 2.4 * cm]))
+    S.append(Spacer(1, 6))
+    S += [Paragraph(t, bullet, bulletText="•") for t in [
+        "CryCeleb dan UJM praktis tidak berubah (±0,02): kualitas audio bukan penyebab skor yang rendah. Sinyalnya "
+        "memang lemah.",
+        "DBL turun 0,07–0,10. Penyebabnya tidak bisa dipisahkan: sebagian karena isyarat di atas 4 kHz (bisa "
+        "shortcut bandwidth rekaman, bisa juga informasi harmonik tangis yang asli), sebagian karena data makin kecil "
+        "(94 klip). Diagnostik yang ditetapkan di muka: sample rate saja memberi macro-F1 0,197 (acak 0,20), jadi "
+        "sample rate sendiri bukan prediktor langsung.",
+        "Kesimpulan v2 kokoh terhadap pembersihan data: tidak ada metode pembobotan atau fusi yang terbukti lebih "
+        "baik, baik pada data apa adanya maupun data yang dibersihkan."]]
+
 doc = SimpleDocTemplate("reports/v2_fixes_and_results.pdf", pagesize=A4, leftMargin=2 * cm, rightMargin=2 * cm,
                         topMargin=1.8 * cm, bottomMargin=2 * cm, title="Laporan Perbaikan dan Hasil v2",
                         author="Audit kode microasa")

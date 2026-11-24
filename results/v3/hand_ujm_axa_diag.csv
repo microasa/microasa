@@ -1,0 +1,16 @@
+task,rep,seed,fold,tau,w_max,best_single
+ujm_axa,hand,0,0,1000.0,0.9999899244642969,spectral
+ujm_axa,hand,0,1,100.0,0.4329383634648124,mfcc
+ujm_axa,hand,0,2,0.0,0.16666666666666666,mfcc
+ujm_axa,hand,0,3,300.0,0.6982947701737624,mel
+ujm_axa,hand,0,4,300.0,0.5835521363111121,mel
+ujm_axa,hand,1,0,0.0,0.16666666666666666,mel
+ujm_axa,hand,1,1,1000.0,0.9211465589651586,mfcc
+ujm_axa,hand,1,2,300.0,0.9984366356796658,delta
+ujm_axa,hand,1,3,100.0,0.4431988772272798,delta
+ujm_axa,hand,1,4,100.0,0.47639568329505555,mfcc
+ujm_axa,hand,2,0,100.0,0.43820690676248747,spectral
+ujm_axa,hand,2,1,300.0,0.9997138461830501,delta
+ujm_axa,hand,2,2,300.0,0.999168597742608,mfcc
+ujm_axa,hand,2,3,100.0,0.5021436208039872,delta
+ujm_axa,hand,2,4,100.0,0.5397649644204385,delta
