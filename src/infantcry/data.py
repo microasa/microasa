@@ -82,13 +82,18 @@ def load_dbl_clean() -> pd.DataFrame:
     No infant id exists, so each clip is its own group (LIMITATION: subject
     independence cannot be guaranteed on this corpus).
     """
-    m = pd.read_csv(RAW / "infantcry_dbl/metadata.csv")
-    m = m[(m.tier == 2) & (m.source == "online_or_volunteer")]
+    manifest = Path("data/interim/dbl_manifest.csv")
+    if not manifest.exists():
+        raise FileNotFoundError("run scripts/prepare_dbl.py first (protocol v2 DBL cleaning)")
+    m = pd.read_csv(manifest)
+    m = m[m.status == "kept"]
+    # v2: byte-identical and cross-corpus duplicates removed; near-duplicate clips share
+    # one CV group (connected components), see scripts/prepare_dbl.py.
     return pd.DataFrame(
         {
             "path": [str(RAW / "infantcry_dbl" / f) for f in m.filename],
             "label": m["class"].values,
-            "group": ["dbl_" + str(i) for i in range(len(m))],
+            "group": m.group.values,
             "dataset": "infantcry_dbl",
         }
     )
