@@ -13,12 +13,13 @@ def load_npz(name: str):
     return X, z["y"], z["groups"]  # noqa: RET504
 
 
-def load_embeddings(task: str, model: str):
+def load_embeddings(task: str, model: str, protocol: str = "v2"):
     """Layer-wise embeddings aligned to a task's rows by audio path."""
-    from .data import EMB_POOL, LOADERS
+    from .data import EMB_POOL, load_task
 
-    df = LOADERS[task]()
-    z = np.load(f"data/interim/emb_{model}_{EMB_POOL[task]}.npz")
+    df = load_task(task, protocol)
+    tag = "" if protocol == "v2" else f"{protocol}_"
+    z = np.load(f"data/interim/emb_{tag}{model}_{EMB_POOL[task]}.npz")
     pos = {p: i for i, p in enumerate(z["paths"])}
     layers = z["layers"][[pos[p] for p in df.path]].astype(np.float32)
     X = {f"L{i:02d}": layers[:, i] for i in range(layers.shape[1])}

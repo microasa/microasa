@@ -1,6 +1,6 @@
 """Protocol v2 runner: one task x one representation -> results/v2/<rep>_<task>_*.csv
 
-usage: run_v2.py <task: cryceleb|infantcry_dbl|ujm_sex|ujm_age|ujm_axa> <rep: hand|w2v2|hubert>
+usage: run_v2.py <task: cryceleb|infantcry_dbl|ujm_sex|ujm_age|ujm_axa> <rep: hand|w2v2|hubert> [v2|v3]
 Protocol (PROTOCOL.md): StratifiedGroupKFold 5 folds x seeds {0,1,2} for every run.
 """
 import os
@@ -21,21 +21,22 @@ from infantcry.evaluate import load_embeddings  # noqa: E402
 from infantcry.features import GROUPS  # noqa: E402
 from infantcry.fusion import combine, fit_bank, fit_expert, superb_weighted_sum  # noqa: E402
 
-PROTOCOL = "v2"
 SEEDS, N_SPLITS, PCA_DIM = (0, 1, 2), 5, 64
 task, rep = sys.argv[1], sys.argv[2]
+PROTOCOL = sys.argv[3] if len(sys.argv) > 3 else "v2"
+TAG = "" if PROTOCOL == "v2" else PROTOCOL + "_"
 SHA = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.strip()
 
-hz = np.load(f"data/interim/hand_{task}.npz")
+hz = np.load(f"data/interim/hand_{TAG}{task}.npz")
 dur_by_path = dict(zip(hz["paths"], hz["duration"]))
 if rep == "hand":
     X = {g: hz[f"X_{g}"].astype(np.float64) for g in GROUPS}
     y, groups, paths = hz["y"], hz["groups"], hz["paths"]
 else:
-    X, y, groups = load_embeddings(task, rep)
-    from infantcry.data import LOADERS
+    X, y, groups = load_embeddings(task, rep, PROTOCOL)
+    from infantcry.data import load_task
 
-    paths = np.array(LOADERS[task]().path.tolist())
+    paths = np.array(load_task(task, PROTOCOL).path.tolist())
 dur = np.array([dur_by_path[p] for p in paths], dtype=np.float64)[:, None]
 classes = np.unique(y)
 print(f"{rep} {task}: n={len(y)} subjects={len(set(groups))} classes={dict(pd.Series(y).value_counts())} sha={SHA}",
@@ -79,8 +80,8 @@ for seed in SEEDS:
     cv = StratifiedGroupKFold(N_SPLITS, shuffle=True, random_state=seed)
     jobs += [(seed, f, tr, te) for f, (tr, te) in enumerate(cv.split(np.zeros(len(y)), y, groups))]
 out = Parallel(n_jobs=4)(delayed(run_fold)(*j) for j in jobs)
-Path("results/v2").mkdir(parents=True, exist_ok=True)
-stem = f"results/v2/{rep}_{task}"
+Path(f"results/{PROTOCOL}").mkdir(parents=True, exist_ok=True)
+stem = f"results/{PROTOCOL}/{rep}_{task}"
 res = pd.DataFrame([r for o in out for r in o[0]])
 res.to_csv(f"{stem}_folds.csv", index=False)
 pd.concat([o[1] for o in out]).to_csv(f"{stem}_preds.csv.gz", index=False)

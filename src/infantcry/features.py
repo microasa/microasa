@@ -93,8 +93,21 @@ def clip_duration(path: str) -> float:
     return float(sf.info(path).duration)
 
 
-def extract(path: str) -> dict[str, np.ndarray]:
-    y, _ = librosa.load(path, sr=SR, mono=True, duration=MAX_SECONDS)
+BANDLIMIT_SR = 8000  # protocol v3: keep only 0-4 kHz
+
+
+def load_audio(path: str, max_seconds: float = MAX_SECONDS, bandlimit: bool = False) -> np.ndarray:
+    """Mono 16 kHz audio. With bandlimit=True the signal is resampled to 8 kHz
+    (anti-aliased) and back, removing all content above 4 kHz (protocol v3)."""
+    y, _ = librosa.load(path, sr=SR, mono=True, duration=max_seconds)
+    if bandlimit:
+        y = librosa.resample(librosa.resample(y, orig_sr=SR, target_sr=BANDLIMIT_SR),
+                             orig_sr=BANDLIMIT_SR, target_sr=SR)
+    return y.astype(np.float32)
+
+
+def extract(path: str, bandlimit: bool = False) -> dict[str, np.ndarray]:
+    y = load_audio(path, MAX_SECONDS, bandlimit)
     if len(y) < SR // 4:
         y = np.pad(y, (0, SR // 4 - len(y)))
     y = y / (np.abs(y).max() + 1e-9)  # peak-normalised: loudness is NOT comparable across corpora

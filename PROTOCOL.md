@@ -55,6 +55,25 @@ Decision rule: a method is called better only if the Holm-adjusted p < 0.05 **an
 95% CI excludes 0. Shortcut check: if `duration_only` is within 0.02 macro-F1 of the
 best model on a task, that task is reported as shortcut-dominated.
 
+## Protocol v3 — data-quality sensitivity analysis (frozen before any v3 result)
+Motivation: a quality scan after v2 found a sample-rate/label association in DBL
+(χ² p = 0.0001; e.g. all `heh` clips are 44.1 kHz, all 8 kHz clips are `eh`), clipping
+in DBL, and low-SNR clips in UJM. v3 is a **sensitivity analysis**: v2 remains the
+primary result, and v3 is reported next to it whatever it shows.
+
+Criteria (applied identically to every task, representation and method):
+1. **Band-limiting:** every clip is resampled to 8 kHz (anti-aliased, removes content
+   above 4 kHz) and back to 16 kHz before feature/embedding extraction, so recording
+   bandwidth can no longer reveal the source or label.
+2. **Clipping:** drop clips with > 0.1% of samples at |x| ≥ 0.999 (native audio).
+3. **Silence:** drop clips where > 50% of 25-ms frames have RMS < 1e-3 (−60 dBFS).
+4. **UJM SNR:** drop UJM clips whose published `SNR` < 10 dB.
+5. Everything else is unchanged from v2 (same models, 5 × 3 CV, DBL groups, primary
+   family H1–H4 with Holm over 36 tests, decision rule). Results go to `results/v3/`.
+
+Pre-declared extra diagnostic (exploratory): a DBL classifier that uses only the native
+sample rate (one-hot), to quantify how much label information the bandwidth cue carries.
+
 ## Deviations
 1. PCA dimension is capped at n_train − 1 when a (inner) training split has fewer than
    65 samples. Only DBL embedding runs are affected (inner splits of ~54 clips). Found as

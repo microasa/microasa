@@ -49,3 +49,20 @@ def test_voicing_uses_same_frames_as_f0():
     onset = np.argmax(voiced)
     # first voiced frame must overlap the tone (frame start i*160, length 1024)
     assert onset * 160 + 1024 > SR // 2 and onset * 160 < SR // 2 + 160
+
+
+def test_bandlimit_removes_content_above_4khz(tmp_path):
+    import soundfile as sf
+
+    from infantcry.features import load_audio
+
+    sig = 0.5 * (np.sin(2 * np.pi * 1000 * T) + np.sin(2 * np.pi * 6000 * T))
+    p = tmp_path / "x.wav"
+    sf.write(p, sig, SR)
+    y = load_audio(str(p), bandlimit=True)
+    spec = np.abs(np.fft.rfft(y))
+    f = np.fft.rfftfreq(len(y), 1 / SR)
+    assert spec[(f > 4100)].max() < 0.01 * spec[(f > 900) & (f < 1100)].max()
+    y0 = load_audio(str(p), bandlimit=False)
+    spec0 = np.abs(np.fft.rfft(y0))
+    assert spec0[(f > 5900) & (f < 6100)].max() > 0.5 * spec0[(f > 900) & (f < 1100)].max()

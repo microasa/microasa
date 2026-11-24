@@ -11,9 +11,10 @@ from sklearn.metrics import f1_score
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from infantcry.stats import holm, nb_test  # noqa: E402
 
+D = sys.argv[1] if len(sys.argv) > 1 else "results/v2"
 TASKS = ["cryceleb", "infantcry_dbl", "ujm_sex", "ujm_age"]
 REPS = ["hand", "w2v2", "hubert"]
-res = pd.concat([pd.read_csv(f) for f in glob.glob("results/v2/*_folds.csv")], ignore_index=True)
+res = pd.concat([pd.read_csv(f) for f in glob.glob(f"{D}/*_folds.csv")], ignore_index=True)
 
 
 def diff(task, rep, a, b):
@@ -41,18 +42,18 @@ prim = family([("H1", "stacking", "equal", REPS), ("H2", "stacking", "best_singl
 prim["p_holm"] = holm(prim.p)
 prim["verdict"] = np.where((prim.p_holm < 0.05) & (prim.ci_low > 0), "A better",
                            np.where((prim.p_holm < 0.05) & (prim.ci_high < 0), "B better", "no evidence"))
-prim.to_csv("results/v2/primary_tests.csv", index=False)
+prim.to_csv(f"{D}/primary_tests.csv", index=False)
 
 expl = family([("E1", "softmax_tau", "equal", REPS), ("E2", "best_single", "last_layer", ["w2v2", "hubert"]),
                ("E3", "superb_wsum", "last_layer", ["w2v2", "hubert"]),
                ("E4", "stacking", "duration_only", REPS)])
-expl.to_csv("results/v2/exploratory_tests.csv", index=False)
+expl.to_csv(f"{D}/exploratory_tests.csv", index=False)
 
 # summary: mean +- sd fold macro-F1, plus pooled macro-F1 (predictions pooled per seed)
 summ = res.groupby(["task", "rep", "method"]).agg(macro_f1=("macro_f1", "mean"), sd=("macro_f1", "std"),
                                                   bal_acc=("bal_acc", "mean")).reset_index()
 pooled = []
-for f in glob.glob("results/v2/*_preds.csv.gz"):
+for f in glob.glob(f"{D}/*_preds.csv.gz"):
     p = pd.read_csv(f)
     rep, task = Path(f).name.replace("_preds.csv.gz", "").split("_", 1)
     for (m, s), g in p.groupby(["method", "seed"]):
@@ -60,7 +61,7 @@ for f in glob.glob("results/v2/*_preds.csv.gz"):
                            pooled=f1_score(g.y.astype(str), g.pred.astype(str), average="macro")))
 pooled = pd.DataFrame(pooled).groupby(["task", "rep", "method"]).pooled.mean().reset_index()
 summ = summ.merge(pooled, on=["task", "rep", "method"], how="left")
-summ.to_csv("results/v2/summary.csv", index=False)
+summ.to_csv(f"{D}/summary.csv", index=False)
 
 pd.set_option("display.width", 220)
 print("PRIMARY FAMILY (Nadeau-Bengio, Holm over", len(prim), "tests)")

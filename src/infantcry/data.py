@@ -106,6 +106,20 @@ LOADERS = {
     "ujm_age": load_ujm_age,
     "ujm_axa": load_ujm,  # delivery method (supplementary; ~chance level)
 }
+
+
+def quality_filter(df: pd.DataFrame) -> pd.DataFrame:
+    """Protocol v3: drop clips flagged by scripts/quality_v3.py."""
+    q = pd.read_csv("data/interim/quality_v3.csv")
+    bad = set(q.loc[q.exclude, "path"])
+    return df[~df.path.isin(bad)].reset_index(drop=True)
+
+
+def load_task(name: str, protocol: str = "v2") -> pd.DataFrame:
+    df = LOADERS[name]()
+    return quality_filter(df) if protocol == "v3" else df
+
+
 # Embeddings are extracted once per audio pool, then matched to task rows by path.
 EMB_POOL = {"cryceleb": "cryceleb", "infantcry_dbl": "infantcry_dbl",
             "ujm_sex": "ujm_axa", "ujm_age": "ujm_axa", "ujm_axa": "ujm_axa"}
