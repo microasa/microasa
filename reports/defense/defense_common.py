@@ -38,6 +38,12 @@ box = ParagraphStyle("box", parent=body, fontName="SS", fontSize=9.4, leading=13
                      backColor=colors.HexColor("#eef4fb"), borderColor=ACC, borderWidth=0.8, borderPadding=8,
                      spaceBefore=6, spaceAfter=12, alignment=0)
 warn = ParagraphStyle("warn", parent=box, backColor=colors.HexColor("#fdf3e7"), borderColor=WARN)
+theory = ParagraphStyle("theory", parent=body, fontSize=9.9, leading=14.4, backColor=colors.HexColor("#f4f6f9"),
+                        borderColor=colors.HexColor("#9aa3ad"), borderWidth=0.6, borderPadding=7, spaceBefore=5,
+                        spaceAfter=10)
+app = ParagraphStyle("app", parent=body, fontSize=9.9, leading=14.4, backColor=colors.HexColor("#eef7f1"),
+                     borderColor=colors.HexColor("#067647"), borderWidth=0.6, borderPadding=7, spaceBefore=3,
+                     spaceAfter=11)
 q = ParagraphStyle("q", parent=body, fontName="SSB", fontSize=9.8, leading=13.5, spaceBefore=7, spaceAfter=2,
                    alignment=0, keepWithNext=1, textColor=ACC)
 a = ParagraphStyle("a", parent=body, fontSize=9.8, leading=14, leftIndent=12, spaceAfter=4)
@@ -67,6 +73,14 @@ class Book:
 
     def WARN(self, t):
         self.P(t, warn)
+
+    def T(self, head, text):
+        """Theory block."""
+        self.S.append(Paragraph(f"<b>Teori — {head}.</b> {text}", theory))
+
+    def APP(self, text):
+        """Application block: how the theory is used in the paper."""
+        self.S.append(Paragraph(f"<b>Aplikasi di paper ini.</b> {text}", app))
 
     def CH(self, t, first=False):
         if not first:
