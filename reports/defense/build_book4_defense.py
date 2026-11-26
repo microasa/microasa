@@ -10,6 +10,7 @@ from scipy import stats
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from defense_common import Book  # noqa: E402
+from learning_resources import add_learning_path  # noqa: E402
 
 p2, p3 = pd.read_csv("results/v2/primary_tests.csv"), pd.read_csv("results/v3/primary_tests.csv")
 s2, s3 = pd.read_csv("results/v2/summary.csv"), pd.read_csv("results/v3/summary.csv")
@@ -417,6 +418,8 @@ bk.QA("Versi awal melaporkan 0,85 di DBL. Bagaimana kami bisa percaya angka Anda
       "protokol yang dibekukan, dengan unit test dan hash commit.")
 
 # =============================================================== Lampiran
+add_learning_path(bk, "p4")
+
 bk.CH("Lampiran. Notasi dan Daftar Periksa")
 bk.TBL([["Simbol", "Arti"],
         ["P<sub>g</sub>(c|x)", "peluang kelas c dari pakar g"], ["w<sub>g</sub>, τ", "bobot pakar; suhu softmax"],
