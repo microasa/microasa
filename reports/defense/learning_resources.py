@@ -43,6 +43,14 @@ V = {
             yt("QTlsNoV7MQM")),
     "leak1": ("Reproducibility Crisis in Machine Learning Based Science — Sayash Kapoor (2022 Virtual Event, Part 3)",
               yt("hfK-fMGTI3M")),
+    "prisma": ("The PRISMA 2020 flow diagram: what is it all about?", yt("IgYqlv71l6g")),
+    "kappa": ("Cohen's Kappa: Measuring Agreement", yt("aUxlxrPKyxY")),
+    "conv": ("But what is a convolution? (3Blue1Brown)", yt("KuXjwB4LzSA")),
+    "rnn": ("Recurrent Neural Networks (RNNs), Clearly Explained!!! (StatQuest)", yt("AsNTP8Kwu80")),
+    "lstm": ("Long Short-Term Memory (LSTM), Clearly Explained (StatQuest)", yt("YCzL96nL7j0")),
+    "transformer": ("Transformer Neural Networks, ChatGPT's foundation, Clearly Explained!!! (StatQuest)",
+                    yt("zxQyTK8quyY")),
+    "wavelet": ("Wavelets: a mathematical microscope (Artem Kirsanov)", yt("jnxqHcObNK4")),
     "leak2": ("The Reproducibility Crisis in Machine Learning Based Science — Arvind Narayanan (Hariri Institute)",
               yt("icJFr9TYmD4")),
 }
@@ -74,6 +82,27 @@ R = {
     "ssl": "Baevski et al. (2020) wav2vec 2.0; Hsu et al. (2021) HuBERT; Mohamed, Lee et al. (2022) Self-supervised "
            "speech representation learning: a review (arXiv 2205.10643); Yang et al. (2021) SUPERB.",
     "wolpert": "Wolpert (1992), Stacked generalization, Neural Networks 5(2).",
+    "prisma": "Page et al. (2021), The PRISMA 2020 statement, BMJ 372:n71, beserta dokumen Explanation and "
+              "Elaboration; Rethlefsen et al. (2021), PRISMA-S (pelaporan pencarian).",
+    "kitch": "Kitchenham & Charters (2007), Guidelines for performing systematic literature reviews in software "
+             "engineering (EBSE Technical Report); Cochrane Handbook for Systematic Reviews of Interventions.",
+    "biblio": "Donthu et al. (2021), How to conduct a bibliometric analysis: an overview and guidelines, Journal of "
+              "Business Research 133.",
+    "kappa": "Cohen (1960), A coefficient of agreement for nominal scales; Landis & Koch (1977), The measurement of "
+             "observer agreement for categorical data, Biometrics 33.",
+    "swim": "Campbell et al. (2020), Synthesis without meta-analysis (SWiM) in systematic reviews: reporting "
+            "guideline, BMJ 368:l6890.",
+    "probast": "Wolff et al. (2019), PROBAST: a tool to assess the risk of bias and applicability of prediction model "
+               "studies, Annals of Internal Medicine 170; Collins et al. (2024), TRIPOD+AI, BMJ 385.",
+    "dlbook": "Goodfellow, Bengio & Courville, Deep Learning (MIT Press, gratis daring): CNN, RNN, regularisasi; "
+              "Zhang et al., Dive into Deep Learning (d2l.ai): attention dan Transformer.",
+    "arch": "Hochreiter & Schmidhuber (1997) LSTM; Vaswani et al. (2017) Attention is all you need; Gong et al. "
+            "(2021) AST: Audio Spectrogram Transformer (arXiv 2104.01778).",
+    "wavecqt": "Mallat, A Wavelet Tour of Signal Processing (Academic Press); Brown (1991), Calculation of a constant "
+               "Q spectral transform, JASA 89(1).",
+    "cryrev": "Ji et al. (2021), A review of infant cry analysis and classification, EURASIP J. Audio Speech Music "
+              "Process.; Owino & Shibwabo (2025), systematic review infant cry paralinguistic classification, JMIR "
+              "Rehabil Assist Technol.",
     "cui": "Cui et al. (2019), Class-balanced loss based on effective number of samples, CVPR.",
 }
 
@@ -166,6 +195,8 @@ def add_learning_path(bk, paper):
                   ["2", "Modul 3–4", "bisa menurunkan gradien SAFB dan menjelaskan pelatihan"],
                   ["3", "Modul 5–6", "bisa menjelaskan kebocoran dan menurunkan rujukan peluang acak"],
                   ["4", "Modul 7–8 + simulasi sidang", "bisa menjawab seluruh bank pertanyaan tanpa catatan"]])
+    elif paper in ("p2", "p3"):
+        _slr_modules(bk, paper)
     else:
         module(bk, "Modul 1. Sinyal, mel, dan MFCC",
                "memahami representasi akustik dan bukti bahwa rata-rata MFCC redundan dengan rata-rata log-mel.",
@@ -221,3 +252,83 @@ def add_learning_path(bk, paper):
                   ["2", "Modul 4–5", "bisa menurunkan model pakar dan semua combiner"],
                   ["3", "Modul 6–7", "bisa menjelaskan kebocoran, audit, Nadeau–Bengio, dan MDE"],
                   ["4", "Modul 8 + simulasi sidang", "bisa menjawab seluruh bank pertanyaan tanpa catatan"]])
+
+
+def _slr_modules(bk, paper):
+    module(bk, "Modul 1. Metodologi tinjauan sistematis dan PRISMA 2020",
+           "memahami perbedaan tinjauan naratif, sistematis, dan bibliometrik, serta isi checklist dan diagram alir "
+           "PRISMA 2020.", "tidak ada.", "T.1–T.2", ["prisma"], ["prisma", "kitch"],
+           ["Isi checklist PRISMA 2020 (27 butir) untuk naskah Anda dan tandai butir yang belum terpenuhi.",
+            "Gambar diagram alir PRISMA dengan angka nyata: identified, duplicates removed, screened, excluded, "
+            "full-text assessed, included."],
+           ["Apa beda record, report, dan study dalam PRISMA 2020?", "Mengapa pra-registrasi (OSF/PROSPERO) penting?"])
+    module(bk, "Modul 2. Strategi pencarian dan bibliometrik",
+           "merancang string pencarian yang presisi, memahami Crossref/OpenAlex/Scopus, dan analisis bibliometrik.",
+           "Modul 1.", "T.3 dan R.2", [], ["prisma", "biblio"],
+           ["Jalankan ulang kueri Crossref Anda dan hitung berapa record yang memuat 'crypt' di judul; ulangi dengan "
+            "frasa \u201cinfant cry\u201d dalam tanda kutip, atau cry NOT crypt*.",
+            "Bandingkan jumlah record Crossref dengan Scopus dan IEEE Xplore untuk kueri yang sama."],
+           ["Mengapa 'cry' sebagai substring berbahaya?", "Apa itu precision dan recall sebuah string pencarian?"])
+    module(bk, "Modul 3. Penyaringan dan reliabilitas antar-penilai",
+           "melakukan screening judul/abstrak dan teks lengkap oleh dua penilai, dan menghitung Cohen's kappa.",
+           "Modul 2.", "T.4", ["kappa"], ["kappa", "kitch"],
+           ["Saring 50 record secara independen bersama satu rekan, hitung kappa dan persentase kesepakatan.",
+            "Tulis aturan penyelesaian ketidaksepakatan (konsensus atau penilai ketiga)."],
+           ["Mengapa kappa bisa rendah walau kesepakatan tinggi (kappa paradox)?", "Berapa kappa yang dianggap cukup?"])
+    module(bk, "Modul 4. Ekstraksi data, kualitas studi, dan sintesis",
+           "membuat tabel ekstraksi, menilai risiko bias, dan melaporkan sintesis tanpa meta-analisis secara benar.",
+           "Modul 3.", "T.5 dan D.3", [], ["swim", "probast"],
+           ["Rancang tabel ekstraksi: dataset, tugas, split (per subjek/acak), metrik, ada/tidaknya macro-F1, "
+            "evaluasi lintas korpus, ablation.",
+            "Isi tabel itu untuk 10 studi pertama dan hitung proporsinya."],
+           ["Apa beda klaim kualitatif dan klaim yang didukung tabel ekstraksi?", "Kapan meta-analisis tidak layak?"])
+    if paper == "p2":
+        module(bk, "Modul 5. CNN untuk spektrogram", "memahami konvolusi, receptive field, dan pooling.",
+               "aljabar linear.", "T.6", ["conv"], ["dlbook"],
+               ["Latih CNN kecil pada log-mel satu korpus tangis dan catat jumlah parameter.",
+                "Hitung receptive field tiga lapis konvolusi 3×3 dengan pooling 2×2."],
+               ["Mengapa CNN cocok untuk pola lokal waktu–frekuensi?", "Apa kelemahan CNN untuk dinamika panjang?"])
+        module(bk, "Modul 6. RNN, LSTM, GRU, dan CRNN", "memahami pemodelan sekuens dan masalah vanishing gradient.",
+               "Modul 5.", "T.6", ["rnn", "lstm"], ["dlbook", "arch"],
+               ["Tulis persamaan gerbang LSTM dan jelaskan peran tiap gerbang.",
+                "Bandingkan CNN dan CRNN pada data yang sama dengan split per bayi."],
+               ["Mengapa LSTM mengatasi vanishing gradient?", "Kapan CRNN layak dipakai?"])
+        module(bk, "Modul 7. Attention, Transformer, AST, dan self-supervised",
+               "memahami self-attention, patch spektrogram, dan representasi pretrained.", "Modul 6.", "T.6",
+               ["transformer", "w2v2", "hubert", "ssl"], ["arch", "ssl"],
+               ["Turunkan attention(Q, K, V) = softmax(QK<super>T</super>/√d)V dan jelaskan peran √d.",
+                "Baca paper AST dan gambarkan bagaimana spektrogram 128 × T dipotong menjadi patch."],
+               ["Mengapa Transformer butuh positional embedding?", "Mengapa model pretrained menarik untuk data kecil?"])
+        module(bk, "Modul 8. Evaluasi, generalisasi lintas korpus, dan ablation",
+               "memahami confounding, split per subjek, domain shift, dan metrik seimbang.", "Modul 4–7.", "T.7",
+               ["cv", "confusion", "leak1", "leak2"], ["kapoor", "saeb", "varo"],
+               ["Ambil satu klaim 'arsitektur X lebih baik' dari korpus Anda dan daftar semua variabel yang ikut berubah.",
+                "Hitung akurasi classifier mayoritas pada salah satu dataset yang sering dipakai."],
+               ["Mengapa perbaikan arsitektur tidak bisa diatribusikan tanpa ablation?", "Apa itu domain shift?"])
+    else:
+        module(bk, "Modul 5. Fourier dan STFT", "memahami spektrum, jendela, dan resolusi waktu–frekuensi.",
+               "aljabar kompleks.", "T.6", ["fourier", "stft", "asp"], ["fmp", "sasp"],
+               ["Hitung STFT satu klip tangis dengan tiga panjang jendela dan bandingkan.",
+                "Buktikan Δf = f<sub>s</sub>/N."], ["Apa trade-off waktu–frekuensi?", "Mengapa jendela Hann dipakai?"])
+        module(bk, "Modul 6. Mel, MFCC, wavelet, dan CQT",
+               "memahami representasi handcrafted utama dan dasar matematisnya.", "Modul 5.", "T.6–T.7",
+               ["mel", "mfcc", "wavelet"], ["fmp", "wavecqt", "slp"],
+               ["Turunkan pipeline MFCC dan tunjukkan bahwa rata-rata MFCC adalah DCT dari rata-rata log-mel.",
+                "Bandingkan resolusi CQT (Q konstan) dengan STFT pada nada 300 Hz dan 1.200 Hz."],
+               ["Mengapa skala mel berasal dari pendengaran dewasa?", "Mengapa wavelet cocok untuk transien?"])
+        module(bk, "Modul 7. Front-end yang dapat dipelajari",
+               "memahami SincNet, LEAF/PCEN, dan filterbank adaptif, termasuk SAFB dari Paper 1.", "Modul 6.", "T.8",
+               ["sincnet"], ["sincleaf", "pcen"],
+               ["Ringkas desain dan hasil Paper 1 (SAFB) sebagai contoh benchmark front-end terkendali.",
+                "Daftar biaya (parameter, waktu) SincNet dan LEAF dari literatur."],
+               ["Mengapa front-end learnable rawan overfitting pada data kecil?", "Apa arti 'movement is not adaptation'?"])
+        module(bk, "Modul 8. Benchmark fitur terkendali dan evaluasi",
+               "merancang perbandingan fitur yang hanya mengubah satu variabel.", "Modul 4–7.", "T.9",
+               ["cv", "leak1", "power"], ["kapoor", "varo"],
+               ["Tulis protokol benchmark: satu classifier, satu dataset, split per subjek, macro-F1, uji berpasangan.",
+                "Bandingkan protokol Anda dengan desain Paper 1."],
+               ["Mengapa perbandingan dengan baseline dari publikasi lain tidak sah?", "Apa itu confounding?"])
+    plan(bk, [["1", "Modul 1–2", "bisa menjelaskan PRISMA dan memperbaiki string pencarian"],
+              ["2", "Modul 3–4", "menyelesaikan screening ganda, kappa, dan tabel ekstraksi"],
+              ["3", "Modul 5–7", "menguasai teori domain yang ditinjau"],
+              ["4", "Modul 8 + simulasi sidang", "bisa menjawab seluruh bank pertanyaan tanpa catatan"]])
