@@ -311,7 +311,35 @@ bk.TBL([["Jenis", "Ancaman", "Mitigasi"],
         ["Kesimpulan statistik", "DBL kecil; NB hanya aproksimasi untuk split berkelompok; Holm konservatif",
          "MDE dilaporkan; CI dilaporkan; hasil tanpa koreksi diungkapkan"]],
        [3.0 * cm, 7.0 * cm, 6.6 * cm], "Tabel D.1. Ancaman validitas.")
-bk.H2("D.6 Kesimpulan")
+bk.H2("D.6 Pekerjaan lanjutan: pembobotan yang dirancang ulang")
+bk.P("Bagian ini menjawab pertanyaan 'apakah pembobotan yang lebih baik bisa membantu?'. Jawaban jujurnya: mungkin, tetapi "
+     "hanya bila dirancang untuk menurunkan varians bobot dan diuji dengan protokol baru yang dibekukan sebelum dijalankan. "
+     "Diagnostik v2 menjadi dasar usulan.")
+bk.B(["Pada embedding wav2vec2 dan HuBERT, suhu softmax τ yang dipilih validasi dalam kebanyakan berada pada 30–1.000, "
+      "yaitu hampir memilih satu lapisan (results/v2/*_diag.csv).",
+      "Best-single paling sering memilih lapisan L00 atau L01, sedangkan SUPERB menaruh bobot terbesar di lapisan tengah "
+      "dengan bobot puncak rata-rata hanya 0,29–0,55. Dua metode tidak sepakat, dan tidak ada lapisan yang dominan.",
+      "Artinya bobot yang dipelajari tidak stabil antar-fold. Pada data berukuran 103 sampai 4.954 klip, bobot yang terlalu "
+      "bebas cenderung menyesuaikan derau."])
+bk.TBL([["Usulan", "Alasan", "Risiko", "Prioritas"],
+        ["Bobot non-negatif, jumlah 1, regularisasi entropi atau L1", "mengurangi derajat kebebasan dan varians bobot",
+         "bisa mendekati best-single", "1"],
+        ["Kalibrasi (temperature scaling) tiap ahli sebelum fusi", "ahli yang kepercayaannya tidak seimbang mendistorsi rata-rata",
+         "rendah", "2"],
+        ["Bobot dari log-loss validasi dalam, bukan Macro-F1", "log-loss lebih halus dan stabil pada data kecil", "rendah", "3"],
+        ["Pembobotan dua tingkat (lapisan, lalu grup fitur)", "memperkecil jumlah bobot yang dipelajari sekaligus",
+         "sedang", "4"],
+        ["Gating input-adaptif (bobot bergantung klip)", "memungkinkan bobot berbeda per rekaman",
+         "tinggi: parameter jauh lebih banyak daripada data; hanya layak di CryCeleb", "5"]],
+       [5.2 * cm, 5.2 * cm, 4.2 * cm, 2.0 * cm], "Tabel D.2. Rancangan ulang pembobotan yang diusulkan (belum dijalankan).")
+bk.WARN("<b>Syarat protokol v4.</b> (1) Bekukan modifikasi, hipotesis, dan aturan keputusan sebelum menjalankan apa pun. "
+        "(2) Setel pada sebagian bayi dan konfirmasi sekali pada bayi yang tidak pernah dipakai memilih apa pun. Pembagian "
+        "dev/test resmi CryCeleb dapat dipakai untuk ini bila belum dipakai dalam pemilihan. (3) Hitung ulang MDE: di CryCeleb "
+        "0,015–0,020, tetapi di DBL bersih 0,115–0,237 sehingga hasil DBL tidak informatif. (4) Menjalankan modifikasi "
+        "berulang pada fold v2 sampai ada hasil signifikan adalah p-hacking dan tidak boleh dilakukan.")
+bk.P("Hasil v4 apa pun dapat dipertahankan: 'modifikasi X dirancang menurunkan varians bobot; hasilnya tetap, naik, atau turun "
+     "dengan CI sekian'. Yang tidak dapat dipertahankan adalah modifikasi yang dipilih setelah melihat fold uji.")
+bk.H2("D.7 Kesimpulan")
 bk.BOX("Di bawah evaluasi pra-registrasi yang mengendalikan kebocoran pada tiga korpus publik, pembobotan kelas, grup fitur, "
        "dan lapisan (termasuk stacking dan SUPERB) tidak mengungguli rata-rata sederhana atau pemilihan satu pakar, dan "
        "hasil ini bertahan setelah pembersihan data. Korpus tangis publik perlu diaudit duplikasi antar-tier dan antar-korpus "
@@ -402,6 +430,18 @@ bk.QA("Apa rekomendasi Anda untuk peneliti yang ingin memakai pembobotan?",
 bk.QA("Apakah temuan kontaminasi DBL berarti dataset itu tidak boleh dipakai?",
       "Tidak. Yang tidak bisa dipercaya adalah metadata sumbernya. Dataset masih bisa dipakai setelah salinan dibuang dan "
       "klip mirip dikelompokkan, seperti yang kami lakukan.")
+bk.QA("Apakah pembobotan yang dirancang lebih baik akan menghasilkan hasil positif?",
+      "Tidak bisa dijanjikan. Diagnostik v2 menunjukkan bobot tidak stabil antar-fold (τ besar, lapisan terbaik berbeda "
+      "antar metode, bobot puncak SUPERB hanya 0,29–0,55), sehingga mengurangi derajat kebebasan bobot masuk akal "
+      "sebagai langkah berikutnya (Tabel D.2). Tetapi selisih stacking dengan rata-rata sederhana pada CryCeleb "
+      "praktis nol, dan hambatan utamanya mungkin informasi dalam data, bukan cara menimbang. Karena itu usulan "
+      "diperlakukan sebagai pekerjaan lanjutan dengan protokol baru.",
+      "Jangan menjanjikan hasil; tunjukkan bahwa usulan berbasis diagnostik dan diuji dengan protokol beku.")
+bk.QA("Mengapa tidak langsung mencoba modifikasi itu dan melaporkan yang terbaik?",
+      "Karena memilih yang terbaik dari beberapa varian pada fold yang sama menaikkan peluang positif palsu. Dengan 36 "
+      "uji primer saja kami sudah mendapat 3 hasil p &lt; 0,05 tanpa koreksi yang semuanya gugur setelah Holm. Varian "
+      "tambahan harus dibekukan lebih dulu dan dikonfirmasi pada bayi yang tidak dipakai menyetel.",
+      "Pemisahan data setel dan konfirmasi adalah inti jawabannya.")
 bk.H2("Q-X. Integritas dan disertasi")
 bk.QA("Bagaimana kami tahu Anda tidak mengulang eksperimen sampai hasilnya sesuai?",
       "Protokol v2 dan v3 di-commit sebelum hasilnya ada (27ae932, 228d42b), dan setiap file hasil menyimpan hash commit "
