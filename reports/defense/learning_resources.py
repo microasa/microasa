@@ -138,63 +138,7 @@ def add_learning_path(bk, paper):
             "Untuk estimasi F0 berbasis autokorelasi, tidak ditemukan tutorial video yang bisa diverifikasi, jadi "
             "modul itu memakai bacaan saja.")
     if paper == "p1":
-        module(bk, "Modul 1. Sinyal, Fourier, dan STFT",
-               "memahami spektrum, resolusi frekuensi, dan trade-off waktu–frekuensi yang menentukan Δf = 31,25 Hz.",
-               "aljabar kompleks dasar; sinus dan kosinus.", "T.2",
-               ["fourier", "asp", "stft"], ["fmp", "sasp"],
-               ["Hitung STFT satu klip tangis dengan N = 512 dan N = 1.024; bandingkan bagaimana harmonik terpisah.",
-                "Buktikan bahwa Δf = f<sub>s</sub>/N dan main-lobe Hann = 4 bin."],
-               ["Mengapa FFT 1.024 tidak mengubah hasil Donate-a-Cry?", "Berapa Δf dan main-lobe di paper ini?"])
-        module(bk, "Modul 2. Skala mel, filterbank, dan MFCC",
-               "memahami filterbank sebagai matriks 40 × 257 dan hubungan log-mel dengan MFCC.",
-               "Modul 1.", "T.3", ["mel", "mfcc"], ["fmp", "slp"],
-               ["Bangun filterbank mel 40 pita secara manual dan bandingkan dengan librosa.",
-                "Tunjukkan secara numerik bahwa rata-rata MFCC = DCT dari rata-rata log-mel."],
-               ["Mengapa log-mel dan SAFB berbiaya sama?", "Apa yang hilang ketika MFCC memotong koefisien tinggi?"])
-        module(bk, "Modul 3. Front-end yang dapat dipelajari",
-               "memahami SincNet, LEAF/PCEN, Gaussian, dan SAFB, serta kritik bahwa front-end learnable sering tidak "
-               "benar-benar belajar.", "Modul 2; kalkulus turunan.", "T.4–T.6",
-               ["sincnet"], ["sincleaf", "pcen"],
-               ["Implementasikan satu pita SAFB di PyTorch dan bandingkan gradien autograd dengan rumus ∂H/∂c, ∂H/∂w, "
-                "∂H/∂s di buku ini.",
-                "Plot ∂H/∂s sepanjang frekuensi untuk s = 0,3 bin dan s = 3 bin; jelaskan mengapa yang pertama nyaris nol."],
-               ["Mengapa normalisasi luas penting?", "Apa arti 'movement is not adaptation'?"])
-        module(bk, "Modul 4. Pelatihan jaringan",
-               "memahami softmax, cross-entropy berbobot, AdamW, dan early stopping.", "kalkulus; probabilitas dasar.",
-               "T.7", ["softmax", "xent", "adam"], ["d2l"],
-               ["Latih classifier kecil pada data timpang dengan dan tanpa bobot kelas; bandingkan porsi prediksi "
-                "mayoritas.", "Turunkan gradien cross-entropy terhadap logit (p − y)."],
-               ["Mengapa AdamW memisahkan weight decay?", "Mengapa early stopping berhenti di epoch 2–5 di Donate-a-Cry?"])
-        module(bk, "Modul 5. Evaluasi dan kebocoran",
-               "memahami mengapa pembagian per kontributor wajib dan bagaimana kebocoran menggelembungkan skor.",
-               "Modul 4.", "T.8", ["cv", "leak1", "leak2"], ["kapoor", "saeb", "varo", "islr"],
-               ["Bandingkan pembagian acak per klip dengan pembagian per UUID pada Donate-a-Cry; catat selisih skornya.",
-                "Daftar semua jalur kebocoran yang mungkin di pipeline Anda (pengelompokan, augmentasi, duplikat)."],
-               ["Ke arah mana kebocoran membiaskan skor?", "Mengapa UUID bukan jaminan independensi bayi?"])
-        module(bk, "Modul 6. Metrik dan rujukan peluang acak",
-               "menguasai Macro-F1, classifier mayoritas, dan acak bertingkat.", "Modul 5.", "T.9",
-               ["confusion"], ["islr"],
-               ["Simulasikan 10.000 classifier acak bertingkat pada distribusi Donate-a-Cry; bandingkan dengan 0,196.",
-                "Turunkan Macro-F1 mayoritas 2p/(K(1 + p)) dan hitung untuk S1 dan S2."],
-               ["Mengapa akurasi 83,6% tidak berarti apa-apa?", "Di mana posisi model Anda relatif terhadap dua rujukan?"])
-        module(bk, "Modul 7. Inferensi: bootstrap, permutasi, Holm, daya",
-               "menguasai bootstrap klaster, uji randomisasi berpasangan, Holm, corrected t-test, dan konsep daya.",
-               "statistik dasar (p-value, distribusi normal).", "T.10",
-               ["boot", "bootp", "ci", "se", "holm", "fdr", "power"], ["perm", "holm", "nb"],
-               ["Implementasikan bootstrap klaster dan bandingkan lebarnya dengan bootstrap per klip.",
-                "Implementasikan uji randomisasi yang menukar prediksi per grup; tunjukkan p minimum = 1/(B + 1).",
-                "Terapkan Holm pada 12 p-value Tabel R.3 secara manual."],
-               ["Apa asumsi keterpertukaran uji randomisasi?", "Mengapa Holm lebih kuat dari Bonferroni?"])
-        module(bk, "Modul 8. Integritas riset",
-               "memahami p-hacking, pra-spesifikasi versus pra-registrasi, dan uji ekuivalensi.", "Modul 7.",
-               "M.5 dan D.7", ["phack", "poweran"], ["lakens", "kapoor"],
-               ["Tulis ulang protokol ReCANVo Anda dalam format pra-registrasi publik (misalnya OSF).",
-                "Lakukan TOST dengan margin ±0,02 pada SAFB vs Gaussian, dan jelaskan mengapa itu tetap post-hoc."],
-               ["Apa beda pre-specified dan pre-registered?", "Mengapa 'tidak berbeda' bukan 'setara'?"])
-        plan(bk, [["1", "Modul 1–2", "bisa menggambar pipeline STFT → mel → log → DCT dan menghitung Δf"],
-                  ["2", "Modul 3–4", "bisa menurunkan gradien SAFB dan menjelaskan pelatihan"],
-                  ["3", "Modul 5–6", "bisa menjelaskan kebocoran dan menurunkan rujukan peluang acak"],
-                  ["4", "Modul 7–8 + simulasi sidang", "bisa menjawab seluruh bank pertanyaan tanpa catatan"]])
+        raise ValueError("Jalur belajar ini tidak tersedia di repositori publik.")
     elif paper in ("p2", "p3"):
         _slr_modules(bk, paper)
     else:
@@ -317,16 +261,16 @@ def _slr_modules(bk, paper):
                 "Bandingkan resolusi CQT (Q konstan) dengan STFT pada nada 300 Hz dan 1.200 Hz."],
                ["Mengapa skala mel berasal dari pendengaran dewasa?", "Mengapa wavelet cocok untuk transien?"])
         module(bk, "Modul 7. Front-end yang dapat dipelajari",
-               "memahami SincNet, LEAF/PCEN, dan filterbank adaptif, termasuk SAFB dari Paper 1.", "Modul 6.", "T.8",
+               "memahami SincNet, LEAF/PCEN, dan filterbank adaptif dari literatur.", "Modul 6.", "T.8",
                ["sincnet"], ["sincleaf", "pcen"],
-               ["Ringkas desain dan hasil Paper 1 (SAFB) sebagai contoh benchmark front-end terkendali.",
+               ["Ringkas desain dan hasil satu benchmark front-end terkendali dari literatur.",
                 "Daftar biaya (parameter, waktu) SincNet dan LEAF dari literatur."],
                ["Mengapa front-end learnable rawan overfitting pada data kecil?", "Apa arti 'movement is not adaptation'?"])
         module(bk, "Modul 8. Benchmark fitur terkendali dan evaluasi",
                "merancang perbandingan fitur yang hanya mengubah satu variabel.", "Modul 4–7.", "T.9",
                ["cv", "leak1", "power"], ["kapoor", "varo"],
                ["Tulis protokol benchmark: satu classifier, satu dataset, split per subjek, macro-F1, uji berpasangan.",
-                "Bandingkan protokol Anda dengan desain Paper 1."],
+                "Bandingkan protokol Anda dengan protokol benchmark yang dipublikasikan."],
                ["Mengapa perbandingan dengan baseline dari publikasi lain tidak sah?", "Apa itu confounding?"])
     plan(bk, [["1", "Modul 1–2", "bisa menjelaskan PRISMA dan memperbaiki string pencarian"],
               ["2", "Modul 3–4", "menyelesaikan screening ganda, kappa, dan tabel ekstraksi"],
